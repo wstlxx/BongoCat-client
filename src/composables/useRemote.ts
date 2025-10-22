@@ -1,10 +1,13 @@
 import { error as logError } from '@tauri-apps/plugin-log'
 import { watch } from 'vue'
 
+import { useModel } from './useModel'
+
 import { useServerStore } from '@/stores/server'
 
 export function useRemote() {
   const serverStore = useServerStore()
+  const { handlePress, handleRelease, handleMouseChange, handleMouseMove } = useModel()
   let ws: WebSocket | null = null
 
   const connectToServer = () => {
@@ -27,8 +30,30 @@ export function useRemote() {
       }
 
       ws.onmessage = (event) => {
-        console.warn(`Received message: ${event.data}`)
-        // Handle incoming messages from the server here
+        try {
+          const message = JSON.parse(event.data)
+          console.warn(`Received action: ${message.kind}, value: ${JSON.stringify(message.value)}`)
+
+          switch (message.kind) {
+            case 'KeyboardPress':
+              handlePress(message.value)
+              break
+            case 'KeyboardRelease':
+              handleRelease(message.value)
+              break
+            case 'MousePress':
+              handleMouseChange(message.value)
+              break
+            case 'MouseRelease':
+              handleMouseChange(message.value, false)
+              break
+            case 'MouseMove':
+              handleMouseMove(message.value)
+              break
+          }
+        } catch (e) {
+          console.warn('Failed to parse incoming message:', e)
+        }
       }
 
       ws.onerror = (event) => {
@@ -56,14 +81,6 @@ export function useRemote() {
     ws = null
   }
 
-  const sendRemoteAction = (action: object) => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(action))
-    } else {
-      console.warn('Cannot send remote action: WebSocket is not connected.')
-    }
-  }
-
   // Watch for changes to server settings
   watch(
     () => [serverStore.enabled, serverStore.serverIp, serverStore.serverPort],
@@ -80,6 +97,5 @@ export function useRemote() {
   return {
     connectToServer,
     disconnectFromServer,
-    sendRemoteAction,
   }
 }
