@@ -73,6 +73,7 @@ export function useDevice() {
 
   useTauriListen<DeviceEvent>(LISTEN_KEY.DEVICE_CHANGED, ({ payload }) => {
     if (serverStore.enabled) {
+      console.warn('Remote server enabled, ignoring local input.')
       return
     }
 
