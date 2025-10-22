@@ -63,6 +63,19 @@
           "openLater": "Open Later"
         }
       },
+      "server": {
+        "title": "Server",
+        "labels": {
+          "serverSettings": "Server Settings",
+          "enableServer": "Enable Remote Server",
+          "serverIp": "Server IP Address",
+          "serverPort": "Server Port"
+        },
+        "descriptions": {
+          "serverIp": "IP address of the remote server (e.g., localhost or 192.168.1.100)",
+          "serverPort": "Port number for the server connection"
+        }
+      },
       "model": {
         "title": "Model",
         "labels": {

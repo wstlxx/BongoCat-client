@@ -63,6 +63,19 @@
           "openLater": "稍后开启"
         }
       },
+      "server": {
+        "title": "服务器",
+        "labels": {
+          "serverSettings": "服务器设置",
+          "enableServer": "启用远程服务器",
+          "serverIp": "服务器IP地址",
+          "serverPort": "服务器端口"
+        },
+        "descriptions": {
+          "serverIp": "远程服务器的IP地址",
+          "serverPort": "服务器连接的端口号"
+        }
+      },
       "model": {
         "title": "模型管理",
         "labels": {

@@ -13,6 +13,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useDevice } from '@/composables/useDevice'
 import { useGamepad } from '@/composables/useGamepad'
 import { useModel } from '@/composables/useModel'
+import { useRemote } from '@/composables/useRemote'
 import { useSharedMenu } from '@/composables/useSharedMenu'
 import { hideWindow, setAlwaysOnTop, setTaskbarVisibility, showWindow } from '@/plugins/window'
 import { useCatStore } from '@/stores/cat'
@@ -23,6 +24,7 @@ import { join } from '@/utils/path'
 import { clearObject } from '@/utils/shared'
 
 const { startListening } = useDevice()
+const { connectToServer } = useRemote()
 const appWindow = getCurrentWebviewWindow()
 const { modelSize, handleLoad, handleDestroy, handleResize, handleKeyChange } = useModel()
 const catStore = useCatStore()
@@ -33,7 +35,14 @@ const resizing = ref(false)
 const backgroundImagePath = ref<string>()
 const { stickActive } = useGamepad()
 
-onMounted(startListening)
+onMounted(async () => {
+  startListening()
+
+  // Connect to server without blocking rendering
+  connectToServer().catch((err) => {
+    console.warn('Server connection failed, continuing without server:', err)
+  })
+})
 
 onUnmounted(handleDestroy)
 
