@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@mechakeys/iohook": "^1.1.1",
+    "@tkomde/iohook": "^1.1.6",
     "ws": "^8.18.0"
   }
 }
