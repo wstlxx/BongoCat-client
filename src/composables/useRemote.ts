@@ -5,37 +5,68 @@ import { useServerStore } from '@/stores/server'
 
 export function useRemote() {
   const serverStore = useServerStore()
+  let ws: WebSocket | null = null
 
-  const connectToServer = async () => {
+  const connectToServer = () => {
     if (!serverStore.enabled) {
+      console.warn('Remote connection is disabled.')
       return
     }
 
+    // Disconnect any existing connection before creating a new one
+    disconnectFromServer()
+
+    const url = `ws://${serverStore.serverIp}:${serverStore.serverPort}`
+    console.warn(`Attempting to connect to WebSocket server at ${url}`)
+
     try {
-      // Add your WebSocket or HTTP connection logic here
-      // Example: const ws = new WebSocket(url)
-      // For now just log success
+      ws = new WebSocket(url)
+
+      ws.onopen = () => {
+        console.warn('WebSocket connection established.')
+      }
+
+      ws.onmessage = (event) => {
+        console.warn(`Received message: ${event.data}`)
+        // Handle incoming messages from the server here
+      }
+
+      ws.onerror = (event) => {
+        const errorMessage = `WebSocket error observed: ${event.type}`
+        console.warn(errorMessage)
+        logError(errorMessage)
+      }
+
+      ws.onclose = () => {
+        console.warn('WebSocket connection closed.')
+        ws = null
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      logError(`Failed to connect to server: ${message}`)
-      console.warn('Server connection failed, continuing without server')
+      logError(`Failed to create WebSocket connection: ${message}`)
+      console.warn(`Failed to create WebSocket connection: ${message}`)
+      ws = null
     }
   }
 
   const disconnectFromServer = () => {
-    // Add your disconnect logic here
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.close()
+    }
+    ws = null
   }
 
   // Watch for changes to server settings
   watch(
     () => [serverStore.enabled, serverStore.serverIp, serverStore.serverPort],
-    async ([enabled]) => {
-      if (enabled) {
-        await connectToServer()
+    () => {
+      if (serverStore.enabled) {
+        connectToServer()
       } else {
         disconnectFromServer()
       }
     },
+    { immediate: true }, // Connect immediately on startup if enabled
   )
 
   return {
