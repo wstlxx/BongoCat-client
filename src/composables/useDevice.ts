@@ -8,6 +8,7 @@ import { ref } from 'vue'
 import { INVOKE_KEY, LISTEN_KEY } from '../constants'
 
 import { useModel } from './useModel'
+import { useRemote } from './useRemote'
 import { useTauriListen } from './useTauriListen'
 
 import { useModelStore } from '@/stores/model'
@@ -33,6 +34,7 @@ type DeviceEvent = MouseButtonEvent | MouseMoveEvent | KeyboardEvent
 export function useDevice() {
   const modelStore = useModelStore()
   const serverStore = useServerStore()
+  const { sendRemoteAction } = useRemote()
   const lastCursorPoint = ref<CursorPoint>({ x: 0, y: 0 })
   const { handlePress, handleRelease, handleMouseChange, handleMouseMove } = useModel()
 
@@ -73,7 +75,7 @@ export function useDevice() {
 
   useTauriListen<DeviceEvent>(LISTEN_KEY.DEVICE_CHANGED, ({ payload }) => {
     if (serverStore.enabled) {
-      console.warn('Remote server enabled, ignoring local input.')
+      sendRemoteAction(payload)
       return
     }
 

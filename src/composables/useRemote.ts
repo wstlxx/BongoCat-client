@@ -56,6 +56,14 @@ export function useRemote() {
     ws = null
   }
 
+  const sendRemoteAction = (action: object) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(action))
+    } else {
+      console.warn('Cannot send remote action: WebSocket is not connected.')
+    }
+  }
+
   // Watch for changes to server settings
   watch(
     () => [serverStore.enabled, serverStore.serverIp, serverStore.serverPort],
@@ -72,5 +80,6 @@ export function useRemote() {
   return {
     connectToServer,
     disconnectFromServer,
+    sendRemoteAction,
   }
 }
