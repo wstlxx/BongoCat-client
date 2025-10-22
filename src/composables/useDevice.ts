@@ -11,6 +11,7 @@ import { useModel } from './useModel'
 import { useTauriListen } from './useTauriListen'
 
 import { useModelStore } from '@/stores/model'
+import { useServerStore } from '@/stores/server'
 
 interface MouseButtonEvent {
   kind: 'MousePress' | 'MouseRelease'
@@ -31,6 +32,7 @@ type DeviceEvent = MouseButtonEvent | MouseMoveEvent | KeyboardEvent
 
 export function useDevice() {
   const modelStore = useModelStore()
+  const serverStore = useServerStore()
   const lastCursorPoint = ref<CursorPoint>({ x: 0, y: 0 })
   const { handlePress, handleRelease, handleMouseChange, handleMouseMove } = useModel()
 
@@ -70,6 +72,10 @@ export function useDevice() {
   }
 
   useTauriListen<DeviceEvent>(LISTEN_KEY.DEVICE_CHANGED, ({ payload }) => {
+    if (serverStore.enabled) {
+      return
+    }
+
     const { kind, value } = payload
 
     if (kind === 'KeyboardPress' || kind === 'KeyboardRelease') {
