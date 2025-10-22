@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const iohook = require('iohook');
+const iohook = require('@mechakeys/iohook');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
