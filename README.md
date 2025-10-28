@@ -1,3 +1,8 @@
+## client版本开发背景
+本质上保留了上游的所有功能，但是菜单里加了服务器设置，可以从指定的IP和端口读取对方设备的输入情况，显示在本机的Bongocat。
+因此对方需要配套的server软件发送报文，链接如下：[BongoCat-server](https://github.com/wstlxx/BongoCat-server)
+
+
 ![BongoCat](https://socialify.git.ci/ayangweb/BongoCat/image?custom_description=&description=1&font=Source+Code+Pro&forks=1&issues=1&logo=https%3A%2F%2Fgithub.com%2Fayangweb%2FBongoCat%2Fblob%2Fmaster%2Fsrc-tauri%2Fassets%2Flogo-mac.png%3Fraw%3Dtrue&name=1&owner=1&pattern=Floating+Cogs&pulls=1&stargazers=1&theme=Auto)
 
 <div align="center">
